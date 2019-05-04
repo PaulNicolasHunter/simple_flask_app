@@ -37,5 +37,5 @@ class SqlManagment:
 					 PRICE            INT     NOT NULL,
 					 IMAGE_URL        CHAR(50),
 					 DISCRIPTION         CHAR(250));''')
-
+		self.conn.commit()
 		print("Table created successfully")
