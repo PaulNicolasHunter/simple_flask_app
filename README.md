@@ -1,4 +1,4 @@
-# simple_flask_app
+# A product sotore using flask.
 A simple flask application for product viewing, searching and wish-list creation
 
 ## some pre-requists
