@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles/search.css">
     <title>Wish list</title>
 </head>
@@ -12,35 +13,43 @@
 <div class="container">
     <nav>
         <div class="nav-wrapper">
-            <form action="search_item" method="post">
+            <form>
                 <div class="input-field">
-                    <input id="search" type="search" name="product" required>
+                    <input id="search" type="search" required>
                     <label class="label-icon" for="search"><i class="material-icons">search</i></label>
                     <i class="material-icons">close</i>
                 </div>
             </form>
+            <ul class="right hide-on-med-and-down">
+                <li><a class="waves-effect waves-light btn" href="/">Home Page <i class="material-icons right">home</i></a>
+                </li>
+                <li><a class="waves-effect waves-light btn" href="/wish_list">Wish list <i class="material-icons right">bookmark</i></a>
+                </li>
+            </ul>
         </div>
-        <button id="wish"><a href="/wish_list">View Wishlist</a></button>
-        <button id="home"><a href="/">Home Page</a></button>
+
     </nav>
 </div>
-
-{% if products['found'] %}
-<div class="col s12"><h4>Your wishlist</h4></div>
-{% else %}
-<div class="col s12"><h4>no items in wishlist..</h4></div>
-{% endif %}
 <div class="container">
-    <div class="row">
-        {% for _ in products['data'] %}
-        <div class="col s6">
-            <div class="card" id={{ _[0] }}>
-                <div class="image_m"><img src="{{ _[3] }}" alt={{ _[1] }}></div>
-                <p class="price">₹ {{ _[2] }}</p>
-                <p>{{ _[4] }}</p>
+
+    {% if products['found'] %}
+    <div class="col s12"><h4>Your wishlist</h4></div>
+    {% else %}
+    <div class="col s12"><h4>there are no items in your wishlist..</h4></div>
+    {% endif %}
+    <hr>
+    <div class="container">
+        <div class="row">
+            {% for _ in products['data'] %}
+            <div class="col s6">
+                <div class="card" id={{ _[0] }}>
+                    <div class="image_m"><img src="{{ _[3] }}" alt={{ _[1] }}></div>
+                    <p class="price">₹ {{ _[2] }}</p>
+                    <p>{{ _[4] }}</p>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 
