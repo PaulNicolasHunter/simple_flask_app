@@ -6,13 +6,15 @@ from static.some_apis.mail_me import mail_me
 app = Flask(__name__)
 
 sql = SqlManagment()
+tables = []
 
 
 @app.route('/', methods=['GET'])
 def welcome():
-	if not check_existing('RECENT'):
+	if 'RECENT' not in tables:  # check_existing('RECENT'):
 		sql.initialize_tables(2)
 		records_recent = []
+		tables.append('RECENT')
 	else:
 		records_recent = sql.conn.execute('SELECT * FROM RECENT').fetchall()
 	return render_template('homepage.html', products=records_recent)
@@ -22,11 +24,12 @@ def welcome():
 def search_product():
 	query = request.form['product']
 
-	if not check_existing('PRODUCTS'):
+	if 'PRODUCT' not in tables: # check_existing('PRODUCT'):
 		sql.initialize_tables(1)
 		update_products = Product()
 		update_products.add_dummy()
 		update_products.update_table()
+		tables.append('PRODUCTS')
 
 	records_all = sql.conn.execute(f"SELECT * FROM PRODUCTS WHERE (NAME LIKE '%{query}%')").fetchall()
 
@@ -42,9 +45,10 @@ def search_product():
 
 @app.route('/wish_list', methods=['GET'])
 def view_wishlist():
-	if not check_existing('WISHLIST'):
+	if 'WISHLIST' not in tables:  # check_existing('WISHLIST'):
 		sql.initialize_tables(3)
 		i_wish_i_had = []
+		tables.append('WISHLIST')
 		return render_template('make_a_wish.html', products={"data": i_wish_i_had, "found": False})
 
 	else:
