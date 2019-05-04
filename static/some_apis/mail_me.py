@@ -1,12 +1,11 @@
 import smtplib
 
-s = smtplib.SMTP('smtp.gmail.com', 587)
 
-s.starttls()
-
-s.login("sender_email_id", "sender_email_id_password")
-
-message = "Message_you_need_to_send"
-# we can handle this by the use of cookies
-s.sendmail("<sender_mail_id>", "<receiver_mail_id>", message)
-s.quit()
+def mail_me(user_mail, pro_mess):
+	mail_ref = smtplib.SMTP('smtp.gmail.com', 587)
+	mail_ref.starttls()
+	mail_ref.login("sender_email_id", "sender_email_id_password")
+	message = pro_mess
+	# we can handle this by the use of cookies
+	mail_ref.sendmail("<sender_mail_id>", user_mail, message)
+	mail_ref.quit()

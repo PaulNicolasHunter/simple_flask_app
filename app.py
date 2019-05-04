@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from user_states.products_stat import Product
 from database_handler.sql_conn import SqlManagment
+from static.some_apis.mail_me import mail_me
 
 app = Flask(__name__)
 
@@ -68,6 +69,20 @@ def remove_it():
 	table = request.form['table']
 	sql.conn.execute("DELETE from {} where ID = ?;".format(table), id_)
 	sql.conn.commit()
+	return ''
+
+
+@app.route('/mail_me', methods=['POST'])
+def mail_me_item():
+	mail = request.form['mail']
+	dat = sql.conn.execute("SELECT * FROM WISHLIST").fetchall()
+	message = 'you wishlist \n'
+	count = 0
+	for _ in dat:
+		message += str(count) + ': ' + 'name' + _[1] + '\n' + 'price' + str(_[2]) + '\n' + 'image' + _[
+			3] + '\n' + 'discription' + _[4] + '\n\n'
+		count += 1
+	mail_me(user_mail=mail, pro_mess=message)
 	return ''
 
 

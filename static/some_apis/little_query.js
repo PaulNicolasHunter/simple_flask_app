@@ -16,6 +16,21 @@ function remove_or_wish_it(ele, rem, tab){
     });
     if (rem === 1) {
         location.reload();
+    } else {
+        alert('Item has been added to your wishlist :)');
     }
 }
+
+function mail_me(){
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: url,
+        data: {"id": id, "table": tab},
+    });
+
+
+}
+
 
