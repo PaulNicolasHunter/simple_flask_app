@@ -21,16 +21,20 @@ function remove_or_wish_it(ele, rem, tab){
     }
 }
 
+$("#e_mail").keydown(function(){
+    mail_me();
+});
+
 function mail_me(){
 
     $.ajax({
         type: "POST",
         dataType: "json",
-        url: url,
-        data: {"id": id, "table": tab},
+        url: '/mail_me',
+        data: {"mail": $('#e_mail').val()},
     });
 
-
+    alert('Please check your mail :)');
 }
 
 

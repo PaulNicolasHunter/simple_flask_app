@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from user_states.products_stat import Product
 from database_handler.sql_conn import SqlManagment
 from static.some_apis.mail_me import mail_me
+from sqlite3 import OperationalError
 
 app = Flask(__name__)
 
@@ -11,8 +12,12 @@ tables = []
 
 @app.route('/', methods=['GET'])
 def welcome():
-	if 'RECENT' not in tables:  # check_existing('RECENT'):
-		sql.initialize_tables(2)
+	if 'RECENT' not in tables:
+		try:  # the table exists
+			if not check_existing('RECENT'):
+				sql.initialize_tables(2)
+		except OperationalError:
+			pass
 		records_recent = []
 		tables.append('RECENT')
 	else:
@@ -24,11 +29,15 @@ def welcome():
 def search_product():
 	query = request.form['product']
 
-	if 'PRODUCT' not in tables: # check_existing('PRODUCT'):
-		sql.initialize_tables(1)
-		update_products = Product()
-		update_products.add_dummy()
-		update_products.update_table()
+	if 'PRODUCT' not in tables:
+		try:
+			if not check_existing('PRODUCT'):
+				sql.initialize_tables(1)
+				update_products = Product()
+				update_products.add_dummy()
+				update_products.update_table()
+		except OperationalError:
+			pass
 		tables.append('PRODUCTS')
 
 	records_all = sql.conn.execute(f"SELECT * FROM PRODUCTS WHERE (NAME LIKE '%{query}%')").fetchall()
@@ -45,8 +54,12 @@ def search_product():
 
 @app.route('/wish_list', methods=['GET'])
 def view_wishlist():
-	if 'WISHLIST' not in tables:  # check_existing('WISHLIST'):
-		sql.initialize_tables(3)
+	if 'WISHLIST' not in tables:
+		try:
+			if not check_existing('WISHLIST'):
+				sql.initialize_tables(3)
+		except OperationalError:
+			pass
 		i_wish_i_had = []
 		tables.append('WISHLIST')
 		return render_template('make_a_wish.html', products={"data": i_wish_i_had, "found": False})
@@ -83,16 +96,16 @@ def mail_me_item():
 	message = 'you wishlist \n'
 	count = 0
 	for _ in dat:
-		message += str(count) + ': ' + 'name' + _[1] + '\n' + 'price' + str(_[2]) + '\n' + 'image' + _[
-			3] + '\n' + 'discription' + _[4] + '\n\n'
+		message += str(count) + ': ' + 'name: ' + _[1] + '\n' + 'price: ' + str(_[2]) + '\n' + 'image: ' + _[
+			3] + '\n' + 'discription: ' + _[4] + '\n\n'
 		count += 1
 	mail_me(user_mail=mail, pro_mess=message)
 	return ''
 
 
 def check_existing(q):
-	tables = sql.conn.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
-	if (q,) not in tables:
+	tables_ = sql.conn.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
+	if (q,) not in tables_:
 		return False
 	else:
 		return True
