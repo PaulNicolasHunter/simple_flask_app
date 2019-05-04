@@ -31,7 +31,8 @@ def search_product():
 
 	if records_all:
 		for _ in records_all:
-			Product().add_recent(_)
+			if not check_avail(_[0], 'RECENT'):
+				Product().add_recent(_)
 		return render_template('available_products.html', products={'found': True, 'data': records_all})
 	else:
 		records_all = sql.conn.execute("SELECT * FROM PRODUCTS").fetchall()
@@ -43,15 +44,31 @@ def view_wishlist():
 	if not check_existing('WISHLIST'):
 		sql.initialize_tables(3)
 		i_wish_i_had = []
+		return render_template('make_a_wish.html', products={"data": i_wish_i_had, "found": False})
+
 	else:
-		i_wish_i_had = sql.conn.execute('SELECT * FROM WISHLIST')
-	return render_template('make_a_wish.html', products=i_wish_i_had)
+		i_wish_i_had = sql.conn.execute('SELECT * FROM WISHLIST').fetchall()
+
+	return render_template('make_a_wish.html', products={"data": i_wish_i_had, "found": True})
 
 
 @app.route('/add_wishlist', methods=['POST'])
-def add_wish():
-	data = request.json
-	Product().add_wishlist(data)
+def add_wishlist():
+	id_ = request.form['id']
+	dat = sql.conn.execute("SELECT * FROM PRODUCTS where ID = ?", id_).fetchall()[0]
+	if not check_avail(id_, 'WISHLIST'):
+		Product().add_wishlist(dat)
+	sql.conn.commit()
+	return ''
+
+
+@app.route('/remove_it', methods=['POST'])
+def remove_it():
+	id_ = request.form['id']
+	table = request.form['table']
+	sql.conn.execute("DELETE from {} where ID = ?;".format(table), id_)
+	sql.conn.commit()
+	return ''
 
 
 def check_existing(q):
@@ -60,6 +77,14 @@ def check_existing(q):
 		return False
 	else:
 		return True
+
+
+def check_avail(id_, tab):
+	dat = sql.conn.execute('SELECT ID FROM {} WHERE ID = {}'.format(tab, id_)).fetchall()
+	if dat:
+		return True
+	else:
+		return False
 
 
 if __name__ == '__main__':
