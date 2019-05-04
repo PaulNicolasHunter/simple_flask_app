@@ -5,6 +5,13 @@ class SqlManagment:
 	def __init__(self):
 		self.conn = sqlite3.connect('products_store.db', check_same_thread=False)
 
+	def check_existing(self, q):
+		tables = self.conn.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
+		if (q,) not in tables:
+			return False
+		else:
+			return True
+
 	def initialize_tables(self, cf=None):
 
 		if cf is 1:

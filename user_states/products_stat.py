@@ -3,41 +3,41 @@ from database_handler.sql_conn import SqlManagment
 
 class Product:
 	def __init__(self):
-		self.wishlist = list()
-		self.recent = list()
 		self.all_products = list()
-		self.con = SqlManagment().conn
+		self.sql = SqlManagment()
 
 	def add_wishlist(self, product):
-		self.wishlist.append([product['id'], product['name'], product['price'], product['img_url'], product['disc']])
-		self.con.execute(
-			'INSERT INTO WISHLIST (ID, NAME, PRICE, IMAGE_URL, DISCRIPTION) VALUES (?, ?, ?, ?, ?)', _)
 
-		self.con.commit()
-		self.con.close()
+		if not self.sql.check_existing('WISHLIST'):
+			self.sql.initialize_tables(3)
+
+		self.sql.conn.execute(
+			'INSERT INTO WISHLIST (ID, NAME, PRICE, IMAGE_URL, DISCRIPTION) VALUES (?, ?, ?, ?, ?)', product)
+
+		self.sql.conn.commit()
+		self.sql.conn.close()
 
 	def add_recent(self, product):
-		self.recent.append([product['id'], product['name'], product['price'], product['img_url'], product['disc']])
-		self.con.execute(
-			'INSERT INTO RECENT (ID, NAME, PRICE, IMAGE_URL, DISCRIPTION) VALUES (?, ?, ?, ?, ?)', _)
+		self.sql.conn.execute(
+			'INSERT INTO RECENT (ID, NAME, PRICE, IMAGE_URL, DISCRIPTION) VALUES (?, ?, ?, ?, ?)', product)
 
-		self.con.commit()
-		self.con.close()
+		self.sql.conn.commit()
+		self.sql.conn.conn.close()
 
-	def add_all(self, product):
+	def add_all(self, product):  # we expect the our api gives us response in json format
 		self.all_products.append(
 			[product['id'], product['name'], product['price'], product['img_url'], product['disc']])
 
 	def update_table(self):
 		for _ in self.all_products:
-			self.con.execute(
+			self.sql.conn.execute(
 				'INSERT INTO PRODUCTS (ID, NAME, PRICE, IMAGE_URL, DISCRIPTION) VALUES (?, ?, ?, ?, ?)', _)
 
-		self.con.commit()
-		self.con.close()
+		self.sql.conn.commit()
+		self.sql.conn.close()
 
 	def add_dummy(self):
-		dat = [{'id': 1, 'name': 'Adidas run', 'price': 4500,
+		api_data = [{'id': 1, 'name': 'Adidas run', 'price': 4500,
 				'img_url': 'https://images.finishline.com/is/image/FinishLine/B79758_BGW?$Main_gray$',
 				'disc': 'Good for running and hiking shoes'}, {'id': 2, 'name': 'Reebok f1', 'price': 5000,
 															   'img_url': 'https://assets.reebok.com/images/h_600,f_auto,q_auto:sensitive,fl_lossy/9bc443cd449e471aa896a8d3008a5cf7_9366/Reebok_Speed_TR_Flexweave__Black_CN5499_01_standard.jpg',
@@ -59,6 +59,5 @@ class Product:
 				'disc': 'never worry'}, {'id': 9, 'name': 'Rockfield v2', 'price': 3600,
 										 'img_url': 'https://images-eu.ssl-images-amazon.com/images/I/41eDQGIRH7L._SX395_QL70_.jpg',
 										 'disc': 'probaby the best ;)'}]
-
-		for _ in dat:
+		for _ in api_data:
 			self.add_all(_)

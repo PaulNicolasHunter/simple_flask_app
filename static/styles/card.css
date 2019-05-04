@@ -6,9 +6,15 @@
   font-family: arial;
 }
 
-.price {
+.card price {
   color: grey;
   font-size: 22px;
+}
+
+.image_m {
+  width: 1px;
+  height: 1px;
+  background-color: yellow;
 }
 
 .card button {

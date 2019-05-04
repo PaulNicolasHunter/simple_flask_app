@@ -5,7 +5,8 @@
     <title>products</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
+    <link rel="stylesheet" href="../static/styles/card.css">
+    <link rel="stylesheet" href="../static/styles/search.css">
 </head>
 <body>
 
@@ -20,6 +21,8 @@
                 </div>
             </form>
         </div>
+     <button id="wish"><a href="/wish_list">View Wishlist</a></button>
+     <button id="home"><a href="/">Home Page</a></button>
     </nav>
 </div>
 
@@ -33,18 +36,18 @@
         {% for _ in products['data'] %}
         <div class="col s6">
             <div class="card" id={{ _[0] }}>
-                <img src={{ _[3] }} alt={{ _[1] }} style="width:100%">
-                <h1>{{ _[1] }}</h1>
-                <p class="price">{{ _[2] }}</p>
+                <div class="image_m"><img src="{{ _[3] }}" alt={{ _[1] }} class="image_m"></div>
+                <p class="price">₹ {{ _[2] }}</p>
                 <p>{{ _[4] }}</p>
                 <p>
-                    <button>Add to Cart</button>
+                    <a href=# id=cart>
+                        <button class='btn btn-default'>Add to Wishlist</button>
+                    </a>
                 </p>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
-
 </body>
 </html>
